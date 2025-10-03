@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil - TCG Collection Bot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Variables du Thème Sombre */
+        :root {
+            --main-bg-color: #1c1c1c;
+            --header-color: #f0f0f0;
+            --accent-color: #74b9ff; /* Bleu clair pour les accents */
+            --menu-bg-color: #2c2c2c;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            background-color: var(--main-bg-color);
+            color: var(--header-color);
+            min-height: 100vh;
+        }
+        
+        /* ------------------ MENU BURGER ------------------ */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background-color: var(--menu-bg-color);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+        .logo {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+        .burger-icon {
+            cursor: pointer;
+            z-index: 1000;
+        }
+        .bar {
+            width: 25px;
+            height: 3px;
+            background-color: var(--header-color);
+            margin: 5px 0;
+            transition: 0.4s;
+        }
+        
+        /* Animation du X */
+        .burger-icon.open .bar:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+        .burger-icon.open .bar:nth-child(2) {
+            opacity: 0;
+        }
+        .burger-icon.open .bar:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+
+        .menu-list {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 250px;
+            height: 100%;
+            background-color: var(--menu-bg-color);
+            padding-top: 80px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+            list-style: none;
+            z-index: 999;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.4);
+        }
+        .menu-list.open {
+            transform: translateX(0);
+        }
+        .menu-list li a {
+            display: block;
+            padding: 15px 30px;
+            text-decoration: none;
+            color: var(--header-color);
+            font-size: 1.1em;
+            transition: background-color 0.2s;
+        }
+        .menu-list li a:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--accent-color);
+        }
+        /* ------------------------------------------------ */
+
+        /* Contenu de la Page d'Accueil */
+        .content {
+            padding: 50px 30px;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .content h2 {
+            font-size: 3em;
+            color: var(--accent-color);
+        }
+        .content p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .cta-button {
+            display: inline-block;
+            padding: 15px 30px;
+            background-color: var(--accent-color);
+            color: var(--main-bg-color);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+            transition: background-color 0.3s;
+        }
+        .cta-button:hover {
+            background-color: #5aa6f5;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <a href="index.html" class="logo">TCG Bot</a>
+        <div class="burger-icon" id="burger">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+        <ul class="menu-list" id="menu">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="cards.html">Cartes à Collectionner (151)</a></li>
+            <li><a href="mycollection.html">Mes Cartes (Collection Personnelle)</a></li>
+        </ul>
+    </header>
+
+    <main class="content">
+        <h2>Bienvenue dans la Collection Pokémon TCG</h2>
+        <p>
+            Explorez les 151 cartes de Kanto qui peuvent être tirées sur le stream de Xezy.
+            Utilisez la commande **!ouvrirpack** ou la récompense de points de chaîne pour tenter votre chance et obtenir les plus rares !
+        </p>
+        <a href="cards.html" class="cta-button">Voir toutes les Cartes</a>
+    </main>
+
+    <script>
+        const burger = document.getElementById('burger');
+        const menu = document.getElementById('menu');
+
+        burger.addEventListener('click', () => {
+            burger.classList.toggle('open');
+            menu.classList.toggle('open');
+        });
+
+        // Fermer le menu si l'utilisateur clique sur un lien
+        menu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                burger.classList.remove('open');
+                menu.classList.remove('open');
+            });
+        });
+    </script>
+
+</body>
+</html>
