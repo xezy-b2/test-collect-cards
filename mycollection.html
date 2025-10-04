@@ -1,12 +1,4 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ma Collection Personnelle</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
-    
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <script>
         // Votre objet de configuration copié depuis Firebase
@@ -20,362 +12,154 @@ const firebaseConfig = {
 };
 
         // Initialisation de Firebase
-        firebase.initializeApp(firebaseConfig);
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
         const db = firebase.firestore();
 
-        // Stocker la liste complète des cartes pour reconstruire les images
+        // Stocker la liste complète des cartes pour reconstruire les images et les informations
         let ALL_CARDS_DATA = [];
+        let cardCatalogMap = {}; // Map pour la recherche rapide par ID
 
-        // Fonction principale pour charger la collection
-        async function loadCollection() {
-            const usernameInput = document.getElementById('username-input').value.trim();
-            const collectionContainer = document.getElementById('card-collection');
+        document.addEventListener('DOMContentLoaded', () => {
+            const usernameInput = document.getElementById('username-input');
+            const loadCollectionBtn = document.getElementById('load-collection-btn');
             const statusMessage = document.getElementById('status-message');
+            const cardCollectionDiv = document.getElementById('card-collection');
 
-            if (!usernameInput) {
-                statusMessage.textContent = "Veuillez entrer votre nom Twitch.";
-                return;
-            }
-
-            const username = usernameInput.toLowerCase();
-            statusMessage.textContent = `Chargement de la collection de ${username}...`;
-            collectionContainer.innerHTML = '';
-
-            try {
-                // 1. Charger la liste complète des cartes (si ce n'est pas déjà fait)
-                if (ALL_CARDS_DATA.length === 0) {
-                    const response = await fetch('cards.json');
+            // --- 1. CHARGEMENT DU CATALOGUE COMPLET (POKÉMON) ---
+            async function loadCardCatalog() {
+                try {
+                    const response = await fetch('cards.json'); 
+                    if (!response.ok) throw new Error('Fichier de catalogue cards.json non trouvé.');
+                    
                     ALL_CARDS_DATA = await response.json();
+                    
+                    // L'ID est souvent l'index dans le JSON (commençant à 1 si le bot est bien configuré)
+                    // Votre bot.js utilise l'index comme ID si l'ID n'est pas dans le JSON.
+                    ALL_CARDS_DATA.forEach((card, index) => {
+                        // On doit s'assurer qu'il y a un ID, comme le bot le fait
+                        const cardId = card.id || String(index + 1); 
+                        cardCatalogMap[cardId] = { ...card, id: cardId };
+                    });
+                    console.log(`Catalogue complet chargé : ${Object.keys(cardCatalogMap).length} cartes.`);
+                    return true;
+                } catch (error) {
+                    console.error("Erreur lors du chargement du catalogue:", error);
+                    statusMessage.textContent = `Erreur: Impossible de charger le fichier de cartes (cards.json).`;
+                    return false;
                 }
+            }
+            
+            loadCardCatalog();
 
-                // 2. Charger les données de la collection de l'utilisateur
-                const doc = await db.collection('collections').doc(username).get();
 
-                if (!doc.exists || !doc.data().cards || doc.data().cards.length === 0) {
-                    statusMessage.textContent = `${username} n'a pas encore de cartes dans sa collection. Ouvrez un pack sur le stream !`;
+            // --- 2. FONCTION DE CHARGEMENT DE LA COLLECTION UTILISATEUR ---
+            loadCollectionBtn.addEventListener('click', () => {
+                const username = usernameInput.value.trim().toLowerCase();
+                if (!username) {
+                    statusMessage.textContent = "Veuillez entrer votre nom Twitch.";
                     return;
                 }
 
-                const userData = doc.data();
-                const userCards = userData.cards;
-                statusMessage.innerHTML = `Collection de **${userData.username}** | Total de cartes : **${userCards.length}** (${userData.totalPacks || 0} packs ouverts)`;
+                if (Object.keys(cardCatalogMap).length === 0) {
+                    statusMessage.textContent = "Catalogue de cartes en cours de chargement ou introuvable. Veuillez réessayer.";
+                    return;
+                }
+
+                statusMessage.textContent = `Chargement de la collection de ${username}...`;
+                cardCollectionDiv.innerHTML = ''; // Nettoyer l'affichage précédent
+
+                db.collection('collections').doc(username).get()
+                    .then(doc => {
+                        if (!doc.exists) {
+                            statusMessage.textContent = `Aucune collection trouvée pour ${username}. Ouvrez votre premier pack sur le stream !`;
+                            return;
+                        }
+
+                        const collectionData = doc.data().cards || [];
+                        const groupedCollection = groupCards(collectionData);
+                        
+                        if (Object.keys(groupedCollection).length === 0) {
+                            statusMessage.textContent = `La collection de ${username} est vide.`;
+                            return;
+                        }
+
+                        displayCollection(groupedCollection, collectionData.length);
+                        statusMessage.innerHTML = `Collection de **${doc.data().username || username}** | Total de cartes : **${collectionData.length}** (${doc.data().totalPacks || 0} packs ouverts)`;
+                    })
+                    .catch(error => {
+                        console.error("Erreur de récupération Firestore:", error);
+                        statusMessage.textContent = `Erreur de connexion à la base de données: ${error.message}`;
+                    });
+            });
+
+            // --- 3. FONCTIONS UTILITAIRES ---
+            function groupCards(cards) {
+                const grouped = {};
+                cards.forEach(card => {
+                    if (!grouped[card.id]) {
+                        // Cherche les informations complètes (dont imageUrl) dans le catalogue
+                        const fullCard = cardCatalogMap[card.id]; 
+                        // Utilise les données du catalogue si elles existent, sinon les données minimales de Firebase
+                        grouped[card.id] = fullCard ? { ...fullCard, count: 0 } : { ...card, count: 0 }; 
+                    }
+                    grouped[card.id].count++;
+                });
+                return grouped;
+            }
+
+            function displayCollection(groupedCollection) {
+                cardCollectionDiv.innerHTML = ''; 
+
+                // Trier par ordre de rareté Pokémon (Rare Holo EX > Rare Holo > Rare > Uncommon > Common)
+                const sortedCards = Object.values(groupedCollection).sort((a, b) => {
+                    const order = ['Rare Holo EX', 'Rare Holo', 'Rare', 'Uncommon', 'Common'];
+                    return order.indexOf(a.rarity) - order.indexOf(b.rarity);
+                });
+
+                sortedCards.forEach(card => {
+                    const cardElement = createCardElement(card);
+                    cardCollectionDiv.appendChild(cardElement);
+                });
+            }
+
+            function createCardElement(card) {
+                const container = document.createElement('div');
+                // Nettoyage de la rareté pour les classes CSS: "Rare Holo EX" -> "RareHoloEX"
+                const rarityClass = card.rarity.replace(/ /g, ''); 
                 
-                // 3. Afficher les cartes (regroupées)
-                displayUserCollection(userCards, collectionContainer);
+                // On utilise les classes qui sont définies dans votre CSS (cards.html)
+                container.className = `card-container ${rarityClass}`; 
 
-            } catch (error) {
-                console.error("Erreur de chargement de la collection:", error);
-                statusMessage.textContent = "Erreur lors de la récupération de la collection. Vérifiez votre nom d'utilisateur et les règles Firestore.";
-            }
-        }
-
-        // Fonction pour regrouper et afficher les cartes
-        function displayUserCollection(userCards, container) {
-            // Regrouper les cartes par ID pour compter les doublons
-            const cardCounts = userCards.reduce((acc, card) => {
-                acc[card.id] = acc[card.id] ? acc[card.id] + 1 : 1;
-                return acc;
-            }, {});
-
-            const sortedCardIds = Object.keys(cardCounts).sort((a, b) => {
-                const cardA = ALL_CARDS_DATA.find(c => c.id === a);
-                const cardB = ALL_CARDS_DATA.find(c => c.id === b);
-                return (cardA ? cardA.pokedexId : Infinity) - (cardB ? cardB.pokedexId : Infinity);
-            });
-
-
-            sortedCardIds.forEach(cardId => {
-                const count = cardCounts[cardId];
-                const cardData = ALL_CARDS_DATA.find(c => c.id === cardId);
-
-                if (cardData) {
-                    const cardElement = createCardElement(cardData, count);
-                    container.appendChild(cardElement);
-                }
-            });
-        }
-
-        function createCardElement(card, count) {
-            const container = document.createElement('div');
-            const rarityClass = card.rarity.replace(/ /g, ''); 
-            container.className = `card-container ${rarityClass}`; 
-
-            // Ajout du compteur
-            if (count > 1) {
-                const counter = document.createElement('div');
-                counter.className = 'card-counter';
-                counter.textContent = `x${count}`;
-                container.appendChild(counter);
+                const imageDiv = document.createElement('div');
+                imageDiv.className = 'card-image';
+                imageDiv.style.backgroundImage = `url('${card.imageUrl || 'default_pokemon.png'}')`;
+                
+                const infoDiv = document.createElement('div');
+                infoDiv.className = 'card-info';
+                
+                const name = document.createElement('h3');
+                name.textContent = card.name;
+                
+                const rarity = document.createElement('p');
+                rarity.textContent = `Rareté: ${card.rarity}`;
+                
+                const count = document.createElement('span');
+                count.className = 'card-count';
+                count.textContent = `x${card.count}`;
+                
+                infoDiv.appendChild(name);
+                infoDiv.appendChild(rarity);
+                
+                container.appendChild(count);
+                container.appendChild(imageDiv);
+                container.appendChild(infoDiv);
+                
+                return container;
             }
 
-            const imageDiv = document.createElement('div');
-            imageDiv.className = 'card-image';
-            imageDiv.style.backgroundImage = `url('${card.imageUrl}')`;
-            
-            const infoDiv = document.createElement('div');
-            infoDiv.className = 'card-info';
-            
-            const name = document.createElement('h3');
-            name.textContent = card.name;
-            
-            const rarity = document.createElement('p');
-            rarity.textContent = `Rareté: ${card.rarity}`;
-            
-            infoDiv.appendChild(name);
-            infoDiv.appendChild(rarity);
-            
-            container.appendChild(imageDiv);
-            container.appendChild(infoDiv);
-            
-            return container;
-        }
-
-        // Événement au clic du bouton
-        document.addEventListener('DOMContentLoaded', () => {
-             document.getElementById('load-collection-btn').addEventListener('click', loadCollection);
-             document.getElementById('username-input').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    loadCollection();
-                }
-            });
-        });
-    </script>
-
-    <style>
-        /* Variables du Thème Sombre */
-        :root {
-            /* Couleurs Rareté (claires pour ressortir) */
-            --color-RareHoloEX: #ff7675; 
-            --color-RareHolo: #a29bfe;   
-            --color-Rare: #fdcb6e;       
-            --color-Uncommon: #74b9ff;   
-            --color-Common: #55efc4;     
-            
-            --main-bg-color: #1c1c1c;
-            --header-color: #f0f0f0;
-            --card-bg-color: #ffffff;
-            --border-color: #444444;
-            --accent-color: #74b9ff;
-            --menu-bg-color: #2c2c2c;
-        }
-
-        body {
-            font-family: 'Nunito', sans-serif;
-            margin: 0;
-            background-color: var(--main-bg-color);
-            color: var(--header-color);
-            min-height: 100vh;
-        }
-
-        /* ------------------ EN-TÊTE ET MENU (Identique à cards.html) ------------------ */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 30px;
-            background-color: var(--menu-bg-color);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .logo {
-            font-size: 1.8em;
-            font-weight: 700;
-            color: var(--accent-color);
-            text-decoration: none;
-        }
-        .burger-icon {
-            cursor: pointer;
-            z-index: 1000;
-        }
-        .bar {
-            width: 25px;
-            height: 3px;
-            background-color: var(--header-color);
-            margin: 5px 0;
-            transition: 0.4s;
-        }
-        .burger-icon.open .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
-        .burger-icon.open .bar:nth-child(2) { opacity: 0; }
-        .burger-icon.open .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
-
-        .menu-list {
-            position: fixed;
-            top: 0;
-            right: 0;
-            width: 250px;
-            height: 100%;
-            background-color: var(--menu-bg-color);
-            padding-top: 80px;
-            transform: translateX(100%);
-            transition: transform 0.3s ease-in-out;
-            list-style: none;
-            z-index: 999;
-            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.4);
-            margin: 0;
-        }
-        .menu-list.open { transform: translateX(0); }
-        .menu-list li a {
-            display: block;
-            padding: 15px 30px;
-            text-decoration: none;
-            color: var(--header-color);
-            font-size: 1.1em;
-            transition: background-color 0.2s;
-        }
-        .menu-list li a:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-            color: var(--accent-color);
-        }
-        /* ------------------------------------------------ */
-
-        /* Styles de la Collection */
-        .content {
-            padding: 30px 20px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        h1 {
-            text-align: center;
-            color: var(--header-color);
-            font-size: 2.5em;
-            font-weight: 700;
-            border-bottom: 3px solid var(--border-color);
-            padding-bottom: 10px;
-            margin-bottom: 30px;
-        }
-
-        /* Formulaire */
-        .search-form {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
-        #username-input {
-            padding: 10px 15px;
-            border-radius: 8px;
-            border: 2px solid var(--accent-color);
-            background-color: #333;
-            color: var(--header-color);
-            font-size: 1.1em;
-            flex-grow: 0.5;
-            max-width: 300px;
-        }
-        #load-collection-btn {
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: none;
-            background-color: var(--accent-color);
-            color: var(--main-bg-color);
-            font-weight: 700;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        #load-collection-btn:hover {
-            background-color: #5aa6f5;
-        }
-
-        #status-message {
-            text-align: center;
-            font-size: 1.2em;
-            font-weight: 700;
-            margin-bottom: 30px;
-            color: var(--accent-color);
-        }
-        
-        /* ------------------ Grille et Cartes ------------------ */
-        #card-collection {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 25px;
-        }
-
-        .card-container {
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); 
-            background-color: var(--card-bg-color); 
-            position: relative; /* Pour positionner le compteur */
-        }
-        
-        .card-container:hover {
-            transform: translateY(-5px); 
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
-        }
-
-        /* Compteur de cartes (x2, x3...) */
-        .card-counter {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: var(--accent-color);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 50%;
-            font-weight: 700;
-            font-size: 1em;
-            z-index: 10;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-        }
-        
-        /* Styles de l'image et des infos identiques à cards.html */
-        .card-image {
-            width: 100%;
-            aspect-ratio: 0.72; 
-            background-size: cover;
-            background-position: center;
-            border-bottom: 2px solid var(--border-color); 
-        }
-
-        .card-info { padding: 12px; text-align: center; }
-        .card-info h3 { margin: 0 0 5px 0; font-size: 1.2em; font-weight: 700; color: #333; }
-        .card-info p { 
-            margin: 0; font-size: 0.95em; font-weight: 700; padding-top: 5px; 
-            border-top: 1px dashed #cccccc; 
-            color: var(--rarity-color, #777); 
-        }
-        .Common p { color: var(--color-Common); }
-        .Uncommon p { color: var(--color-Uncommon); }
-        .Rare p { color: var(--color-Rare); }
-        .RareHolo p { color: var(--color-RareHolo); }
-        .RareHoloEX p { color: var(--color-RareHoloEX); }
-
-    </style>
-</head>
-<body>
-
-    <header class="header">
-        <a href="index.html" class="logo">TCG Bot</a>
-        <div class="burger-icon" id="burger">
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-        </div>
-        <ul class="menu-list" id="menu">
-            <li><a href="index.html">Accueil</a></li>
-            <li><a href="cards.html">Cartes à Collectionner (151)</a></li>
-            <li><a href="mycollection.html">Mes Cartes (Collection Personnelle)</a></li>
-        </ul>
-    </header>
-    <div class="content">
-        <h1>Ma Collection Personnelle</h1>
-
-        <div class="search-form">
-            <input type="text" id="username-input" placeholder="Entrez votre nom Twitch..." />
-            <button id="load-collection-btn">Charger ma collection</button>
-        </div>
-
-        <p id="status-message">Entrez votre nom Twitch pour voir les cartes que vous avez tirées.</p>
-
-        <div id="card-collection">
-            </div>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
+            // --- LOGIQUE DU MENU BURGER (LAISSÉE EN PLACE) ---
             const burger = document.getElementById('burger');
             const menu = document.getElementById('menu');
 
@@ -396,5 +180,3 @@ const firebaseConfig = {
             }
         });
     </script>
-</body>
-</html>
