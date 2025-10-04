@@ -6,14 +6,11 @@
     <title>Ma Collection Personnelle</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
     
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-
     <style>
         /* Variables du Thème Sombre */
         :root {
-            /* Couleurs Rareté (claires pour ressortir) */
-            --color-RareHoloEX: #ff7675; /* Rouge clair pour Dark Mode */
+            /* Couleurs Rareté (claires pour ressortir, basées sur cards.html) */
+            --color-RareHoloEX: #ff7675; /* Rouge clair */
             --color-RareHolo: #a29bfe;   /* Mauve clair */
             --color-Rare: #fdcb6e;       /* Jaune/Orange */
             --color-Uncommon: #74b9ff;   /* Bleu clair */
@@ -21,10 +18,8 @@
             
             --main-bg-color: #1c1c1c;    /* Gris très foncé */
             --header-color: #f0f0f0;     /* Texte blanc cassé */
-            --card-bg-color: #ffffff;    /* Fond des cartes reste blanc (pour le contraste) */
-            --border-color: #444444;     /* Bordure des cartes sombre */
-            --accent-color: #74b9ff;     /* Bleu clair pour les accents */
             --menu-bg-color: #2c2c2c;
+            --accent-color: #74b9ff;
         }
 
         body {
@@ -34,15 +29,17 @@
             color: var(--header-color);
             min-height: 100vh;
         }
-        
-        /* ------------------ EN-TÊTE ET MENU ------------------ */
+
+        /* ------------------ MENU BURGER ------------------ */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 15px 30px;
             background-color: var(--menu-bg-color);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            z-index: 20;
+            position: relative; 
         }
 
         .logo a {
@@ -59,24 +56,29 @@
             padding: 0;
         }
 
-        .menu-list li a {
+        .menu-list li {
+            margin-left: 30px;
+        }
+
+        .menu-list a {
             color: var(--header-color);
             text-decoration: none;
-            padding: 10px 15px;
-            display: block;
+            font-size: 1em;
             transition: color 0.3s;
         }
 
-        .menu-list li a:hover {
+        .menu-list a:hover {
             color: var(--accent-color);
         }
 
+        /* Styles pour mobile (menu burger) */
         .burger-icon {
-            display: none;
+            display: none; 
             cursor: pointer;
+            z-index: 30;
         }
 
-        .bar {
+        .burger-icon .bar {
             width: 25px;
             height: 3px;
             background-color: var(--header-color);
@@ -84,143 +86,18 @@
             transition: 0.4s;
         }
 
-        /* ------------------ FORMULAIRE DE RECHERCHE ------------------ */
-        .content {
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .search-form {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        #username-input {
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            background-color: var(--menu-bg-color);
-            color: var(--header-color);
-            flex-grow: 1;
-            border-radius: 5px;
-        }
-
-        #load-collection-btn {
-            padding: 10px 20px;
-            border: none;
-            background-color: var(--accent-color);
-            color: var(--main-bg-color);
-            font-weight: 700;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-
-        #load-collection-btn:hover {
-            background-color: #5aa6f5;
-        }
-
-        #status-message {
-            margin-top: 0;
-            font-style: italic;
-            color: #ccc;
-        }
-
-        /* ------------------ AFFICHAGE DES CARTES ------------------ */
-        #card-collection {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        .card-container {
-            position: relative;
-            background-color: var(--card-bg-color);
-            border: 5px solid var(--border-color);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            border-radius: 10px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.2s;
-            cursor: default;
-        }
-        
-        .card-container:hover {
-            transform: translateY(-5px);
-        }
-
-        .card-image {
-            width: 100%;
-            padding-top: 100%; /* Ratio 1:1 pour les images, vous pouvez ajuster */
-            background-size: cover;
-            background-position: center;
-            background-color: #333; /* Couleur par défaut si l'image est manquante */
-        }
-
-        .card-info {
-            padding: 10px;
-            color: #333; /* Texte sombre sur fond de carte clair */
-            text-align: center;
-            flex-grow: 1;
-        }
-
-        .card-info h3 {
-            margin: 0 0 5px 0;
-            font-size: 1.1em;
-            font-weight: 700;
-        }
-
-        .card-info p {
-            margin: 0;
-            font-size: 0.9em;
-            font-style: italic;
-        }
-
-        /* COMPTEUR DE CARTES (Nouveau style) */
-        .card-count {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-weight: 700;
-            z-index: 10;
-        }
-
-        /* ------------------ COULEURS DE RARETÉ ------------------ */
-        .RareHoloEX {
-            border-color: var(--color-RareHoloEX);
-        }
-        .RareHolo {
-            border-color: var(--color-RareHolo);
-        }
-        .Rare {
-            border-color: var(--color-Rare);
-        }
-        .Uncommon {
-            border-color: var(--color-Uncommon);
-        }
-        .Common {
-            border-color: var(--color-Common);
-        }
-        
-        /* ------------------ RESPONSIVE MENU ------------------ */
         @media (max-width: 768px) {
             .menu-list {
                 display: none;
                 flex-direction: column;
                 position: absolute;
-                top: 60px; /* Hauteur du header */
+                top: 60px; 
                 left: 0;
                 width: 100%;
                 background-color: var(--menu-bg-color);
-                box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-                z-index: 20;
+                box-shadow: 0 10px 10px rgba(0, 0, 0, 0.3);
+                z-index: 10;
+                padding: 20px 0;
             }
 
             .menu-list.open {
@@ -228,246 +105,145 @@
             }
 
             .menu-list li {
+                margin: 10px 0;
                 text-align: center;
-                border-top: 1px solid #444;
             }
-
+            
             .burger-icon {
-                display: block;
-            }
-
-            .burger-icon.open .bar:nth-child(1) {
-                transform: rotate(-45deg) translate(-5px, 6px);
-            }
-            .burger-icon.open .bar:nth-child(2) {
-                opacity: 0;
-            }
-            .burger-icon.open .bar:nth-child(3) {
-                transform: rotate(45deg) translate(-5px, -6px);
-            }
-        }
-    </style>
-
-    <script>
-        // Votre objet de configuration copié depuis Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyAL5PZdkeN_Vo7PY2z3vT6VV79pkDuQLhE",
-  authDomain: "tcg-bot-24e10.firebaseapp.com",
-  projectId: "tcg-bot-24e10",
-  storageBucket: "tcg-bot-24e10.firebasestorage.app",
-  messagingSenderId: "825599190047",
-  appId: "1:825599190047:web:006b01f7068909a1d8a12a"
-};
-
-        // Initialisation de Firebase
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        const db = firebase.firestore();
-
-        // Stocker la liste complète des cartes pour reconstruire les images et les informations
-        let ALL_CARDS_DATA = [];
-        let cardCatalogMap = {}; // Map pour la recherche rapide par ID
-
-        /**
-         * Construit une map pour un accès rapide aux informations complètes des cartes par ID.
-         * @param {Array} cards - Le catalogue complet des cartes.
-         */
-        function buildCardCatalogMap(cards) {
-            cardCatalogMap = cards.reduce((map, card) => {
-                // S'assure que l'ID est une chaîne de caractères pour la cohérence
-                map[String(card.id)] = card; 
-                return map;
-            }, {});
-            console.log(`Map de catalogue construite avec ${Object.keys(cardCatalogMap).length} entrées.`);
-        }
-
-        /**
-         * Charge le fichier cards.json et construit le catalogue en mémoire.
-         */
-        async function loadCardCatalog() {
-            try {
-                const response = await fetch('./cards.json');
-                if (!response.ok) {
-                    throw new Error(`Erreur HTTP: ${response.status}`);
-                }
-                ALL_CARDS_DATA = await response.json();
-                
-                // 🚨 CRITIQUE : Construction de la map après le chargement du catalogue
-                buildCardCatalogMap(ALL_CARDS_DATA); 
-                
-                console.log(`Catalogue complet chargé : ${ALL_CARDS_DATA.length} cartes.`);
-                return ALL_CARDS_DATA;
-            } catch (error) {
-                console.error('Erreur: Impossible de charger le fichier de cartes (cards.json).', error);
-                return [];
+                display: block; 
             }
         }
         
-        /**
-         * Récupère la collection de cartes pour l'utilisateur spécifié depuis Firebase.
-         * @param {string} username - Le nom d'utilisateur.
-         */
-        async function getCollectionFromFirebase(username) {
-            const statusMessage = document.getElementById('status-message');
-            statusMessage.textContent = `Chargement de la collection de ${username}...`;
-            
-            try {
-                // Chemin d'accès dans la base de données : 'collections/{username}'
-                const docRef = db.collection('collections').doc(username.toLowerCase());
-                const doc = await docRef.get();
+        /* ------------------ CONTENU PRINCIPAL ------------------ */
 
-                if (!doc.exists) {
-                    statusMessage.textContent = `La collection de ${username} est vide ou n'existe pas.`;
-                    return [];
-                }
-
-                // La collection est un objet JSON où les clés sont les IDs des cartes
-                const collectionData = doc.data(); 
-                
-                // Convertir l'objet de collection en un tableau de cartes, incluant le COUNT
-                const cardsArray = Object.keys(collectionData).map(cardId => ({
-                    id: String(cardId), // Assure que l'ID est une chaîne
-                    count: collectionData[cardId].count || 1 
-                }));
-
-                return cardsArray;
-
-            } catch (error) {
-                console.error("Erreur de récupération de la collection:", error);
-                statusMessage.textContent = `Erreur de connexion à la base de données.`;
-                return [];
-            }
+        .content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
 
-        /**
-         * Affiche les cartes dans la section #card-collection.
-         * @param {Array} cardsFromFirebase - Les données de collection (ID et COUNT) de Firebase.
-         */
-        function displayCollection(cardsFromFirebase) {
-            const cardCollectionDiv = document.getElementById('card-collection');
-            const statusMessage = document.getElementById('status-message');
-            cardCollectionDiv.innerHTML = '';
-            
-            if (cardsFromFirebase.length === 0) {
-                statusMessage.textContent = "Collection chargée (0 cartes).";
-                return;
-            }
-
-            let totalCount = cardsFromFirebase.reduce((sum, card) => sum + card.count, 0);
-            statusMessage.textContent = `Collection chargée : ${cardsFromFirebase.length} cartes uniques, ${totalCount} cartes au total.`;
-
-            cardsFromFirebase.forEach(firebaseCard => {
-                
-                // 🚨 POINT CRITIQUE : on récupère les infos complètes de l'image depuis la map !
-                const completeCardInfo = cardCatalogMap[firebaseCard.id];
-                
-                if (completeCardInfo) {
-                    // Créer un objet fusionné pour l'affichage (avec l'URL et le COUNT)
-                    const cardToDisplay = {
-                        ...completeCardInfo, // Infos du catalogue (id, name, rarity, imageUrl)
-                        count: firebaseCard.count // Count de Firebase
-                    };
-                    const cardElement = createCardElement(cardToDisplay);
-                    cardCollectionDiv.appendChild(cardElement);
-                } else {
-                    // Si la carte n'est pas trouvée (Erreur ou ID inconnu), afficher un placeholder
-                    const placeholder = document.createElement('div');
-                    placeholder.className = 'card-container Unknown';
-                    placeholder.innerHTML = `
-                        <div class="card-image" style="background-image: url('default_pokemon.png');"></div>
-                        <div class="card-info">
-                            <h3>ID Inconnu: ${firebaseCard.id}</h3>
-                            <p>Rareté: Inconnue</p>
-                        </div>
-                        <span class="card-count">x${firebaseCard.count}</span>
-                    `;
-                    cardCollectionDiv.appendChild(placeholder);
-                }
-            });
+        h1 {
+            color: var(--accent-color);
+            text-align: center;
+            margin-bottom: 30px;
         }
 
-        /**
-         * Crée l'élément DOM pour une seule carte.
-         * @param {object} card - L'objet carte complet (y compris l'imageUrl).
-         */
-        function createCardElement(card) {
-            const container = document.createElement('div');
-            
-            // Nettoyage de la rareté pour les noms de classes (ex: "Rare Holo EX" devient "RareHoloEX")
-            const rarityClass = card.rarity.replace(/ /g, ''); 
-            container.className = `card-container ${rarityClass}`; 
-
-            const imageDiv = document.createElement('div');
-            imageDiv.className = 'card-image';
-            // 🚨 MODIFICATION CRITIQUE : Utilise DIRECTEMENT card.imageUrl
-            imageDiv.style.backgroundImage = `url('${card.imageUrl || 'default_pokemon.png'}')`; 
-            
-            const infoDiv = document.createElement('div');
-            infoDiv.className = 'card-info';
-            
-            const name = document.createElement('h3');
-            name.textContent = card.name;
-            
-            const rarity = document.createElement('p');
-            rarity.textContent = `Rareté: ${card.rarity}`;
-            
-            const count = document.createElement('span');
-            count.className = 'card-count';
-            count.textContent = `x${card.count}`;
-            
-            infoDiv.appendChild(name);
-            infoDiv.appendChild(rarity);
-            
-            container.appendChild(count);
-            container.appendChild(imageDiv);
-            container.appendChild(infoDiv);
-            
-            return container;
+        .search-form {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
         }
 
+        .search-form input, .search-form button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+        }
 
-        // ------------------ LOGIQUE PRINCIPALE ------------------
-        document.addEventListener('DOMContentLoaded', async () => {
-            const usernameInput = document.getElementById('username-input');
-            const loadCollectionBtn = document.getElementById('load-collection-btn');
-            
-            // 1. Chargement initial du catalogue de cartes
-            await loadCardCatalog();
+        .search-form input {
+            background-color: #333;
+            color: var(--header-color);
+            border: 2px solid var(--accent-color);
+        }
 
-            // 2. Événement du bouton de chargement
-            loadCollectionBtn.addEventListener('click', async () => {
-                const username = usernameInput.value.trim().toLowerCase();
-                if (username) {
-                    const cards = await getCollectionFromFirebase(username);
-                    displayCollection(cards);
-                } else {
-                    document.getElementById('status-message').textContent = "Veuillez entrer un nom d'utilisateur.";
-                }
-            });
+        .search-form button {
+            background-color: var(--accent-color);
+            color: var(--main-bg-color);
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
 
+        .search-form button:hover {
+            background-color: #5aa8ff;
+        }
 
-            // --- LOGIQUE DU MENU BURGER (LAISSÉE EN PLACE) ---
-            const burger = document.getElementById('burger');
-            const menu = document.getElementById('menu');
+        #status-message {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #ccc;
+        }
+        
+        /* ------------------ AFFICHAGE DES CARTES ------------------ */
 
-            if (burger) {
-                burger.addEventListener('click', () => {
-                    burger.classList.toggle('open');
-                    menu.classList.toggle('open');
-                });
-            }
+        #card-collection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
 
-            if (menu) {
-                menu.querySelectorAll('a').forEach(link => {
-                    link.addEventListener('click', () => {
-                        burger.classList.remove('open');
-                        menu.classList.remove('open');
-                    });
-                });
-            }
-        });
-    </script>
+        .card-container {
+            position: relative;
+            background-color: #2c2c2c; 
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            transition: transform 0.2s;
+        }
+
+        .card-container:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-image {
+            width: 100%;
+            padding-top: 100%; 
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .card-info h3 {
+            margin: 5px 0 2px 0;
+            font-size: 1.1em;
+            color: var(--header-color);
+        }
+
+        .card-info p {
+            margin: 0;
+            font-size: 0.9em;
+            color: #aaa;
+        }
+
+        .card-count {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: var(--accent-color);
+            color: var(--main-bg-color);
+            padding: 5px 10px;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.8em;
+            z-index: 10;
+            border: 2px solid white;
+        }
+        
+        /* Styles de Rareté (utilisent la classe nettoyée, ex: RareHoloEX) */
+        .card-container.RareHoloEX {
+            border: 4px solid var(--color-RareHoloEX);
+            box-shadow: 0 0 15px var(--color-RareHoloEX);
+        }
+        .card-container.RareHolo {
+            border: 4px solid var(--color-RareHolo);
+            box-shadow: 0 0 10px var(--color-RareHolo);
+        }
+        .card-container.Rare {
+            border: 4px solid var(--color-Rare);
+        }
+        .card-container.Uncommon {
+            border: 4px solid var(--color-Uncommon);
+        }
+        .card-container.Common {
+            border: 4px solid var(--color-Common);
+        }
+
+    </style>
 </head>
 <body>
     <header class="header">
@@ -494,7 +270,187 @@ const firebaseConfig = {
         <p id="status-message">Entrez votre nom Twitch pour voir les cartes que vous avez tirées.</p>
 
         <div id="card-collection">
-            </div>
+        </div>
     </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script>
+        // Votre objet de configuration copié depuis Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyAL5PZdkeN_Vo7PY2z3vT6VV79pkDuQLhE",
+  authDomain: "tcg-bot-24e10.firebaseapp.com",
+  projectId: "tcg-bot-24e10",
+  storageBucket: "tcg-bot-24e10.firebasestorage.app",
+  messagingSenderId: "825599190047",
+  appId: "1:825599190047:web:006b01f7068909a1d8a12a"
+};
+
+        // Initialisation de Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+
+        let ALL_CARDS_DATA = [];
+        let cardCatalogMap = {}; 
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const usernameInput = document.getElementById('username-input');
+            const loadCollectionBtn = document.getElementById('load-collection-btn');
+            const statusMessage = document.getElementById('status-message');
+            const cardCollectionDiv = document.getElementById('card-collection');
+
+            // --- 1. CHARGEMENT DU CATALOGUE COMPLET (POKÉMON) ---
+            async function loadCardCatalog() {
+                try {
+                    // Cherche cards.json, le fichier Pokémon
+                    const response = await fetch('cards.json'); 
+                    if (!response.ok) throw new Error('Fichier de catalogue cards.json non trouvé.');
+                    
+                    ALL_CARDS_DATA = await response.json();
+                    
+                    // Indexer pour la recherche par ID
+                    ALL_CARDS_DATA.forEach((card, index) => {
+                        // Assure que l'ID est défini, comme le bot le fait
+                        const cardId = card.id || String(index + 1); 
+                        cardCatalogMap[cardId] = { ...card, id: cardId };
+                    });
+                    console.log(`Catalogue complet chargé : ${Object.keys(cardCatalogMap).length} cartes.`);
+                    return true;
+                } catch (error) {
+                    console.error("Erreur lors du chargement du catalogue:", error);
+                    statusMessage.textContent = `Erreur: Impossible de charger le fichier de cartes (cards.json).`;
+                    return false;
+                }
+            }
+            
+            loadCardCatalog();
+
+
+            // --- 2. FONCTION DE CHARGEMENT DE LA COLLECTION UTILISATEUR ---
+            loadCollectionBtn.addEventListener('click', () => {
+                const username = usernameInput.value.trim().toLowerCase();
+                if (!username) {
+                    statusMessage.textContent = "Veuillez entrer votre nom Twitch.";
+                    return;
+                }
+
+                if (Object.keys(cardCatalogMap).length === 0) {
+                    statusMessage.textContent = "Catalogue de cartes en cours de chargement ou introuvable. Veuillez réessayer.";
+                    return;
+                }
+
+                statusMessage.textContent = `Chargement de la collection de ${username}...`;
+                cardCollectionDiv.innerHTML = ''; // Nettoyer l'affichage précédent
+
+                db.collection('collections').doc(username).get()
+                    .then(doc => {
+                        if (!doc.exists) {
+                            statusMessage.textContent = `Aucune collection trouvée pour ${username}. Ouvrez votre premier pack sur le stream !`;
+                            return;
+                        }
+
+                        const collectionData = doc.data().cards || [];
+                        const groupedCollection = groupCards(collectionData);
+                        
+                        if (Object.keys(groupedCollection).length === 0) {
+                            statusMessage.textContent = `La collection de ${username} est vide.`;
+                            return;
+                        }
+
+                        displayCollection(groupedCollection);
+                        statusMessage.innerHTML = `Collection de **${doc.data().username || username}** | Total de cartes : **${collectionData.length}** (${doc.data().totalPacks || 0} packs ouverts)`;
+                    })
+                    .catch(error => {
+                        console.error("Erreur de récupération Firestore:", error);
+                        statusMessage.textContent = `Erreur de connexion à la base de données: ${error.message}`;
+                    });
+            });
+
+            // --- 3. FONCTIONS UTILITAIRES ---
+            function groupCards(cards) {
+                const grouped = {};
+                cards.forEach(card => {
+                    if (!grouped[card.id]) {
+                        // Cherche les informations complètes (dont imageUrl) dans le catalogue
+                        const fullCard = cardCatalogMap[card.id]; 
+                        grouped[card.id] = fullCard ? { ...fullCard, count: 0 } : { ...card, count: 0 }; 
+                    }
+                    grouped[card.id].count++;
+                });
+                return grouped;
+            }
+
+            function displayCollection(groupedCollection) {
+                cardCollectionDiv.innerHTML = ''; 
+
+                // Trier par ordre de rareté Pokémon
+                const sortedCards = Object.values(groupedCollection).sort((a, b) => {
+                    const order = ['Rare Holo EX', 'Rare Holo', 'Rare', 'Uncommon', 'Common'];
+                    return order.indexOf(a.rarity) - order.indexOf(b.rarity);
+                });
+
+                sortedCards.forEach(card => {
+                    const cardElement = createCardElement(card);
+                    cardCollectionDiv.appendChild(cardElement);
+                });
+            }
+
+            function createCardElement(card) {
+                const container = document.createElement('div');
+                // Nettoyage de la rareté pour les classes CSS: "Rare Holo EX" -> "RareHoloEX"
+                const rarityClass = card.rarity ? card.rarity.replace(/ /g, '') : 'Common'; // Fallback
+                
+                container.className = `card-container ${rarityClass}`; 
+
+                const imageDiv = document.createElement('div');
+                imageDiv.className = 'card-image';
+                imageDiv.style.backgroundImage = `url('${card.imageUrl || 'default_pokemon.png'}')`;
+                
+                const infoDiv = document.createElement('div');
+                infoDiv.className = 'card-info';
+                
+                const name = document.createElement('h3');
+                name.textContent = card.name;
+                
+                const rarity = document.createElement('p');
+                rarity.textContent = `Rareté: ${card.rarity}`;
+                
+                const count = document.createElement('span');
+                count.className = 'card-count';
+                count.textContent = `x${card.count}`;
+                
+                infoDiv.appendChild(name);
+                infoDiv.appendChild(rarity);
+                
+                container.appendChild(count);
+                container.appendChild(imageDiv);
+                container.appendChild(infoDiv);
+                
+                return container;
+            }
+
+            // --- LOGIQUE DU MENU BURGER ---
+            const burger = document.getElementById('burger');
+            const menu = document.getElementById('menu');
+
+            if (burger) {
+                burger.addEventListener('click', () => {
+                    burger.classList.toggle('open');
+                    menu.classList.toggle('open');
+                });
+            }
+
+            if (menu) {
+                menu.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        burger.classList.remove('open');
+                        menu.classList.remove('open');
+                    });
+                });
+            }
+        });
+    </script>
 </body>
 </html>
