@@ -8,7 +8,7 @@
   { "id": "7", "name": "Carapuce", "rarity": "Common", "imageUrl": "https://images.pokemontcg.io/base1/63_hires.png" },
   { "id": "8", "name": "Carabaffe", "rarity": "Uncommon", "imageUrl": "https://images.pokemontcg.io/base1/42_hires.png" },
   { "id": "9", "name": "Tortank Holo", "rarity": "Rare Holo EX", "imageUrl": "https://images.pokemontcg.io/base1/2_hires.png" },
-  { "id": "10", "name": "Chenipan", "rarity": "Common", "imageUrl": "https://images.pokemontcg.io/base1/45_hires.png" },
+  { "id": "10", "name": "Chenipan", "rarity": "Common", "imageUrl": "https://i.ibb.co/TD8h6Wpp/Brandarak-gold.png" },
   { "id": "11", "name": "Chrysacier", "rarity": "Uncommon", "imageUrl": "https://images.pokemontcg.io/base1/54_hires.png" },
   { "id": "12", "name": "Papilusion", "rarity": "Rare", "imageUrl": "https://images.pokemontcg.io/base2/33_hires.png" },
   { "id": "13", "name": "Aspicot", "rarity": "Common", "imageUrl": "https://images.pokemontcg.io/base1/69_hires.png" },
@@ -151,6 +151,7 @@
   { "id": "150", "name": "Mewtwo Holo", "rarity": "Rare Holo EX", "imageUrl": "https://images.pokemontcg.io/base1/10_hires.png" },
   { "id": "151", "name": "Mew Holo", "rarity": "Rare Holo EX", "imageUrl": "https://images.pokemontcg.io/base2/15_hires.png" }
 ]
+
 
 
 
