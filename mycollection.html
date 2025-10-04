@@ -1,4 +1,279 @@
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ma Collection Personnelle</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Variables du Thème Sombre */
+        :root {
+            /* Couleurs Rareté (claires pour ressortir, basées sur cards.html) */
+            --color-RareHoloEX: #ff7675; /* Rouge clair */
+            --color-RareHolo: #a29bfe;   /* Mauve clair */
+            --color-Rare: #fdcb6e;       /* Jaune/Orange */
+            --color-Uncommon: #74b9ff;   /* Bleu clair */
+            --color-Common: #55efc4;     /* Vert mint */
+            
+            --main-bg-color: #1c1c1c;    /* Gris très foncé */
+            --header-color: #f0f0f0;     /* Texte blanc cassé */
+            --menu-bg-color: #2c2c2c;
+            --accent-color: #74b9ff;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            background-color: var(--main-bg-color);
+            color: var(--header-color);
+            min-height: 100vh;
+        }
+
+        /* ------------------ MENU BURGER ------------------ */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background-color: var(--menu-bg-color);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            z-index: 20;
+            position: relative; 
+        }
+
+        .logo a {
+            color: var(--header-color);
+            text-decoration: none;
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+
+        .menu-list {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        .menu-list li {
+            margin-left: 30px;
+        }
+
+        .menu-list a {
+            color: var(--header-color);
+            text-decoration: none;
+            font-size: 1em;
+            transition: color 0.3s;
+        }
+
+        .menu-list a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Styles pour mobile (menu burger) */
+        .burger-icon {
+            display: none; 
+            cursor: pointer;
+            z-index: 30;
+        }
+
+        .burger-icon .bar {
+            width: 25px;
+            height: 3px;
+            background-color: var(--header-color);
+            margin: 5px 0;
+            transition: 0.4s;
+        }
+
+        @media (max-width: 768px) {
+            .menu-list {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 60px; 
+                left: 0;
+                width: 100%;
+                background-color: var(--menu-bg-color);
+                box-shadow: 0 10px 10px rgba(0, 0, 0, 0.3);
+                z-index: 10;
+                padding: 20px 0;
+            }
+
+            .menu-list.open {
+                display: flex;
+            }
+
+            .menu-list li {
+                margin: 10px 0;
+                text-align: center;
+            }
+            
+            .burger-icon {
+                display: block; 
+            }
+        }
+        
+        /* ------------------ CONTENU PRINCIPAL ------------------ */
+
+        .content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: var(--accent-color);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .search-form input, .search-form button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .search-form input {
+            background-color: #333;
+            color: var(--header-color);
+            border: 2px solid var(--accent-color);
+        }
+
+        .search-form button {
+            background-color: var(--accent-color);
+            color: var(--main-bg-color);
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .search-form button:hover {
+            background-color: #5aa8ff;
+        }
+
+        #status-message {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #ccc;
+        }
+        
+        /* ------------------ AFFICHAGE DES CARTES ------------------ */
+
+        #card-collection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .card-container {
+            position: relative;
+            background-color: #2c2c2c; 
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            transition: transform 0.2s;
+        }
+
+        .card-container:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-image {
+            width: 100%;
+            padding-top: 100%; 
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .card-info h3 {
+            margin: 5px 0 2px 0;
+            font-size: 1.1em;
+            color: var(--header-color);
+        }
+
+        .card-info p {
+            margin: 0;
+            font-size: 0.9em;
+            color: #aaa;
+        }
+
+        .card-count {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: var(--accent-color);
+            color: var(--main-bg-color);
+            padding: 5px 10px;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.8em;
+            z-index: 10;
+            border: 2px solid white;
+        }
+        
+        /* Styles de Rareté (utilisent la classe nettoyée, ex: RareHoloEX) */
+        .card-container.RareHoloEX {
+            border: 4px solid var(--color-RareHoloEX);
+            box-shadow: 0 0 15px var(--color-RareHoloEX);
+        }
+        .card-container.RareHolo {
+            border: 4px solid var(--color-RareHolo);
+            box-shadow: 0 0 10px var(--color-RareHolo);
+        }
+        .card-container.Rare {
+            border: 4px solid var(--color-Rare);
+        }
+        .card-container.Uncommon {
+            border: 4px solid var(--color-Uncommon);
+        }
+        .card-container.Common {
+            border: 4px solid var(--color-Common);
+        }
+
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo"><a href="index.html">TCG Bot</a></div>
+        <div class="burger-icon" id="burger">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+        <ul class="menu-list" id="menu">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="cards.html">Cartes à Collectionner (151)</a></li>
+            <li><a href="mycollection.html">Mes Cartes (Collection Personnelle)</a></li>
+        </ul>
+    </header>
+    <div class="content">
+        <h1>Ma Collection Personnelle</h1>
+
+        <div class="search-form">
+            <input type="text" id="username-input" placeholder="Entrez votre nom Twitch..." />
+            <button id="load-collection-btn">Charger ma collection</button>
+        </div>
+
+        <p id="status-message">Entrez votre nom Twitch pour voir les cartes que vous avez tirées.</p>
+
+        <div id="card-collection">
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <script>
         // Votre objet de configuration copié depuis Firebase
@@ -17,9 +292,8 @@ const firebaseConfig = {
         }
         const db = firebase.firestore();
 
-        // Stocker la liste complète des cartes pour reconstruire les images et les informations
         let ALL_CARDS_DATA = [];
-        let cardCatalogMap = {}; // Map pour la recherche rapide par ID
+        let cardCatalogMap = {}; 
 
         document.addEventListener('DOMContentLoaded', () => {
             const usernameInput = document.getElementById('username-input');
@@ -30,15 +304,15 @@ const firebaseConfig = {
             // --- 1. CHARGEMENT DU CATALOGUE COMPLET (POKÉMON) ---
             async function loadCardCatalog() {
                 try {
+                    // Cherche cards.json, le fichier Pokémon
                     const response = await fetch('cards.json'); 
                     if (!response.ok) throw new Error('Fichier de catalogue cards.json non trouvé.');
                     
                     ALL_CARDS_DATA = await response.json();
                     
-                    // L'ID est souvent l'index dans le JSON (commençant à 1 si le bot est bien configuré)
-                    // Votre bot.js utilise l'index comme ID si l'ID n'est pas dans le JSON.
+                    // Indexer pour la recherche par ID
                     ALL_CARDS_DATA.forEach((card, index) => {
-                        // On doit s'assurer qu'il y a un ID, comme le bot le fait
+                        // Assure que l'ID est défini, comme le bot le fait
                         const cardId = card.id || String(index + 1); 
                         cardCatalogMap[cardId] = { ...card, id: cardId };
                     });
@@ -85,7 +359,7 @@ const firebaseConfig = {
                             return;
                         }
 
-                        displayCollection(groupedCollection, collectionData.length);
+                        displayCollection(groupedCollection);
                         statusMessage.innerHTML = `Collection de **${doc.data().username || username}** | Total de cartes : **${collectionData.length}** (${doc.data().totalPacks || 0} packs ouverts)`;
                     })
                     .catch(error => {
@@ -101,7 +375,6 @@ const firebaseConfig = {
                     if (!grouped[card.id]) {
                         // Cherche les informations complètes (dont imageUrl) dans le catalogue
                         const fullCard = cardCatalogMap[card.id]; 
-                        // Utilise les données du catalogue si elles existent, sinon les données minimales de Firebase
                         grouped[card.id] = fullCard ? { ...fullCard, count: 0 } : { ...card, count: 0 }; 
                     }
                     grouped[card.id].count++;
@@ -112,7 +385,7 @@ const firebaseConfig = {
             function displayCollection(groupedCollection) {
                 cardCollectionDiv.innerHTML = ''; 
 
-                // Trier par ordre de rareté Pokémon (Rare Holo EX > Rare Holo > Rare > Uncommon > Common)
+                // Trier par ordre de rareté Pokémon
                 const sortedCards = Object.values(groupedCollection).sort((a, b) => {
                     const order = ['Rare Holo EX', 'Rare Holo', 'Rare', 'Uncommon', 'Common'];
                     return order.indexOf(a.rarity) - order.indexOf(b.rarity);
@@ -127,9 +400,8 @@ const firebaseConfig = {
             function createCardElement(card) {
                 const container = document.createElement('div');
                 // Nettoyage de la rareté pour les classes CSS: "Rare Holo EX" -> "RareHoloEX"
-                const rarityClass = card.rarity.replace(/ /g, ''); 
+                const rarityClass = card.rarity ? card.rarity.replace(/ /g, '') : 'Common'; // Fallback
                 
-                // On utilise les classes qui sont définies dans votre CSS (cards.html)
                 container.className = `card-container ${rarityClass}`; 
 
                 const imageDiv = document.createElement('div');
@@ -159,7 +431,7 @@ const firebaseConfig = {
                 return container;
             }
 
-            // --- LOGIQUE DU MENU BURGER (LAISSÉE EN PLACE) ---
+            // --- LOGIQUE DU MENU BURGER ---
             const burger = document.getElementById('burger');
             const menu = document.getElementById('menu');
 
@@ -180,3 +452,5 @@ const firebaseConfig = {
             }
         });
     </script>
+</body>
+</html>
