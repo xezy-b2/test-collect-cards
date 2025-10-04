@@ -92,7 +92,7 @@
   { "id": "91", "name": "Crustabri Holo", "rarity": "Rare Holo", "imageUrl": "https://images.pokemontcg.io/base2/13_hires.png" },
   { "id": "92", "name": "Fantominus", "rarity": "Common", "imageUrl": "https://images.pokemontcg.io/base1/49_hires.png" },
   { "id": "93", "name": "Spectrum", "rarity": "Uncommon", "imageUrl": "https://images.pokemontcg.io/base1/36_hires.png" },
-  { "id": "94", "name": "Ectoplasma Holo", "rarity": "Rare Holo", "imageUrl": "https://images.pokemontcg.io/base1/3_hires.png" },
+  { "id": "94", "name": "Ectoplasma Holo", "rarity": "Rare Holo", "imageUrl": "https://images.pokemontcg.io/swsh8/157.png" },
   { "id": "95", "name": "Onix", "rarity": "Uncommon", "imageUrl": "https://images.pokemontcg.io/base1/35_hires.png" },
   { "id": "96", "name": "Soporifik", "rarity": "Common", "imageUrl": "https://images.pokemontcg.io/base2/51_hires.png" },
   { "id": "97", "name": "Hypnomade", "rarity": "Rare", "imageUrl": "https://images.pokemontcg.io/base2/41_hires.png" },
@@ -151,4 +151,5 @@
   { "id": "150", "name": "Mewtwo Holo", "rarity": "Rare Holo EX", "imageUrl": "https://images.pokemontcg.io/base1/10_hires.png" },
   { "id": "151", "name": "Mew Holo", "rarity": "Rare Holo EX", "imageUrl": "https://images.pokemontcg.io/base2/15_hires.png" }
 ]
+
 
