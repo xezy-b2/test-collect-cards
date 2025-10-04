@@ -85,7 +85,7 @@
   { "id": "84", "name": "Doduo", "rarity": "Common", "imageUrl": "https://images.pokemontcg.io/base3/44_hires.png" },
   { "id": "85", "name": "Dodrio", "rarity": "Rare", "imageUrl": "https://images.pokemontcg.io/base3/34_hires.png" },
   { "id": "86", "name": "Otaria", "rarity": "Common", "imageUrl": "https://images.pokemontcg.io/base1/41_hires.png" },
-  { "id": "87", "name": "Ectoplasma Paldea", "rarity": "Rare Holo", "imageUrl": "https://i.ibb.co/Wvz1SPSw/751595.jpg" },
+  { "id": "87", "name": "Ectoplasma Paldea", "rarity": "Rare Holo", "imageUrl": "https://i.ibb.co/TMpZJCDr/751595.png" },
   { "id": "88", "name": "Tadmorv", "rarity": "Common", "imageUrl": "https://images.pokemontcg.io/base1/56_hires.png" },
   { "id": "89", "name": "Grotadmorv Holo", "rarity": "Rare Holo", "imageUrl": "https://images.pokemontcg.io/base1/6_hires.png" },
   { "id": "90", "name": "Kokiyas", "rarity": "Common", "imageUrl": "https://images.pokemontcg.io/base2/65_hires.png" },
@@ -151,6 +151,7 @@
   { "id": "150", "name": "Mewtwo Holo", "rarity": "Rare Holo EX", "imageUrl": "https://images.pokemontcg.io/base1/10_hires.png" },
   { "id": "151", "name": "Mew Holo", "rarity": "Rare Holo EX", "imageUrl": "https://images.pokemontcg.io/base2/15_hires.png" }
 ]
+
 
 
 
