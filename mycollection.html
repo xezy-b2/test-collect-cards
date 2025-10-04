@@ -360,7 +360,7 @@ const firebaseConfig = {
                         }
 
                         displayCollection(groupedCollection);
-                        statusMessage.innerHTML = `Collection de **${doc.data().username || username}** | Total de cartes : **${collectionData.length}** (${doc.data().totalPacks || 0} packs ouverts)`;
+                        statusMessage.innerHTML = `Collection de ${doc.data().username || username} | Total de cartes : ${collectionData.length} (${doc.data().totalPacks || 0} packs ouverts)`;
                     })
                     .catch(error => {
                         console.error("Erreur de récupération Firestore:", error);
@@ -454,3 +454,4 @@ const firebaseConfig = {
     </script>
 </body>
 </html>
+
