@@ -59,7 +59,7 @@
   { "id": "58", "name": "Caninos", "rarity": "Common", "imageUrl": "https://images.pokemontcg.io/base1/28_hires.png" },
   { "id": "59", "name": "Arcanin", "rarity": "Rare", "imageUrl": "https://images.pokemontcg.io/base1/23_hires.png" },
   { "id": "60", "name": "Poliwag", "rarity": "Common", "imageUrl": "https://images.pokemontcg.io/base1/59_hires.png" },
-  { "id": "61", "name": "Têtarte", "rarity": "Uncommon", "imageUrl": "https://images.pokemontcg.io/base1/38_hires.png" },
+  { "id": "61", "name": "Têtarte", "rarity": "Uncommon", "imageUrl": "https://i.ibb.co/rRwyTKfy/Bellatrique-1.png" },
   { "id": "62", "name": "Poliwrath Holo", "rarity": "Rare Holo", "imageUrl": "https://images.pokemontcg.io/base1/13_hires.png" },
   { "id": "63", "name": "Abra", "rarity": "Common", "imageUrl": "https://images.pokemontcg.io/base1/43_hires.png" },
   { "id": "64", "name": "Kadabra", "rarity": "Uncommon", "imageUrl": "https://images.pokemontcg.io/base1/32_hires.png" },
@@ -151,6 +151,7 @@
   { "id": "150", "name": "Mewtwo Holo", "rarity": "Rare Holo EX", "imageUrl": "https://images.pokemontcg.io/base1/10_hires.png" },
   { "id": "151", "name": "Mew Holo", "rarity": "Rare Holo EX", "imageUrl": "https://images.pokemontcg.io/base2/15_hires.png" }
 ]
+
 
 
 
