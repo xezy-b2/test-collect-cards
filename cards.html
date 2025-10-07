@@ -225,7 +225,9 @@
             const cardListContainer = document.getElementById('card-list');
             const loadingMessage = document.getElementById('loading-message');
 
-            fetch('cards.json')
+            // 🚨 CORRECTION POUR GITHUB PAGES 🚨
+            // Utiliser le chemin absolu /NOM_DU_REPERTOIRE/cards.json pour éviter les problèmes de base path.
+            fetch('/test-collect-cards/cards.json') 
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`Erreur HTTP: ${response.status}`);
@@ -278,4 +280,5 @@
     </script>
 
 </body>
+
 </html>
