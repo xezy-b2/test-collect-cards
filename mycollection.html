@@ -306,7 +306,7 @@ const firebaseConfig = {
             async function loadCardCatalog() {
                 try {
                     // Cherche cards.json, le fichier Pokémon
-                    const response = await fetch('cards.json'); 
+                    const response = await fetch('/test-collect-cards/cards.json'); 
                     if (!response.ok) throw new Error('Fichier de catalogue cards.json non trouvé.');
                     
                     ALL_CARDS_DATA = await response.json();
@@ -469,3 +469,4 @@ const firebaseConfig = {
     </script>
 </body>
 </html>
+
