@@ -30,7 +30,7 @@
             min-height: 100vh;
         }
 
-        /* ------------------ EN-TÊTE ET MENU ------------------ */
+        /* ------------------ MENU BURGER ------------------ */
         .header {
             display: flex;
             justify-content: space-between;
@@ -38,202 +38,216 @@
             padding: 15px 30px;
             background-color: var(--menu-bg-color);
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-            position: sticky; 
-            top: 0;
-            z-index: 100;
+            z-index: 20;
+            position: relative; 
         }
-        .logo {
-            font-size: 1.8em;
-            font-weight: 700;
-            color: var(--accent-color);
+
+        .logo a {
+            color: var(--header-color);
             text-decoration: none;
+            font-size: 1.5em;
+            font-weight: 700;
         }
+
+        .menu-list {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        .menu-list li {
+            margin-left: 30px;
+        }
+
+        .menu-list a {
+            color: var(--header-color);
+            text-decoration: none;
+            font-size: 1em;
+            transition: color 0.3s;
+        }
+
+        .menu-list a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Styles pour mobile (menu burger) */
         .burger-icon {
+            display: none; 
             cursor: pointer;
-            z-index: 1000;
+            z-index: 30;
         }
-        .bar {
+
+        .burger-icon .bar {
             width: 25px;
             height: 3px;
             background-color: var(--header-color);
             margin: 5px 0;
             transition: 0.4s;
         }
+
+        @media (max-width: 768px) {
+            .menu-list {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 60px; 
+                left: 0;
+                width: 100%;
+                background-color: var(--menu-bg-color);
+                box-shadow: 0 10px 10px rgba(0, 0, 0, 0.3);
+                z-index: 10;
+                padding: 20px 0;
+            }
+
+            .menu-list.open {
+                display: flex;
+            }
+
+            .menu-list li {
+                margin: 10px 0;
+                text-align: center;
+            }
+            
+            .burger-icon {
+                display: block; 
+            }
+        }
         
-        .burger-icon.open .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
-        .burger-icon.open .bar:nth-child(2) { opacity: 0; }
-        .burger-icon.open .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+        /* ------------------ CONTENU PRINCIPAL ------------------ */
 
-        .menu-list {
-            position: fixed;
-            top: 0;
-            right: 0;
-            width: 250px;
-            height: 100%;
-            background-color: var(--menu-bg-color);
-            padding-top: 80px;
-            transform: translateX(100%);
-            transition: transform 0.3s ease-in-out;
-            list-style: none;
-            z-index: 999;
-            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.4);
-            margin: 0;
-        }
-        .menu-list.open {
-            transform: translateX(0);
-        }
-        .menu-list li a {
-            display: block;
-            padding: 15px 30px;
-            text-decoration: none;
-            color: var(--header-color);
-            font-size: 1.1em;
-            transition: background-color 0.2s;
-        }
-        .menu-list li a:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-            color: var(--accent-color);
-        }
-        /* ------------------------------------------------ */
-
-        /* Styles de la Collection */
         .content {
-            padding: 30px 20px;
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
-        }
-        h1 {
-            text-align: center;
-            color: var(--header-color);
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            font-weight: 700;
+            padding: 20px;
         }
 
-        /* Formulaire de recherche */
-        .search-container {
-            display: flex;
-            gap: 15px;
+        h1 {
+            color: var(--accent-color);
+            text-align: center;
             margin-bottom: 30px;
-            padding: 15px;
-            border-radius: 8px;
-            background-color: var(--menu-bg-color);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
-        .search-container input, .search-container button {
-            padding: 12px;
-            border-radius: 6px;
+
+        .search-form {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .search-form input, .search-form button {
+            padding: 10px 15px;
             border: none;
-            font-size: 1em;
+            border-radius: 5px;
         }
-        .search-container input {
-            flex-grow: 1;
+
+        .search-form input {
             background-color: #333;
             color: var(--header-color);
+            border: 2px solid var(--accent-color);
         }
-        .search-container button {
+
+        .search-form button {
             background-color: var(--accent-color);
-            color: #1c1c1c;
+            color: var(--main-bg-color);
             font-weight: 700;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: background-color 0.3s;
         }
-        .search-container button:hover {
-            background-color: #5aa4f8; 
+
+        .search-form button:hover {
+            background-color: #5aa8ff;
         }
 
         #status-message {
             text-align: center;
-            font-size: 1.2em;
-            margin: 20px 0;
-            color: var(--color-Rare);
+            margin-bottom: 20px;
+            color: #ccc;
         }
         
-        /* Liste des cartes */
+        /* ------------------ AFFICHAGE DES CARTES ------------------ */
+
         #card-collection {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
         }
 
-        /* Conteneur de Carte */
         .card-container {
             position: relative;
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); 
-            background-color: #ffffff; 
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        
-        .card-container:hover {
-            transform: translateY(-5px); 
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
-        }
-        
-        /* Compteur de Cartes (x2, x5, etc.) */
-        .card-count {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: var(--accent-color);
-            color: #1c1c1c;
-            font-size: 1.2em;
-            font-weight: 700;
-            padding: 4px 8px;
-            border-radius: 50%;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-            z-index: 10;
+            background-color: #2c2c2c; 
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            transition: transform 0.2s;
         }
 
-        /* Image de Carte */
+        .card-container:hover {
+            transform: translateY(-5px);
+        }
+
         .card-image {
             width: 100%;
-            aspect-ratio: 0.72; 
-            background-size: cover;
+            padding-top: 100%; 
+            background-size: contain;
+            background-repeat: no-repeat;
             background-position: center;
-            border-bottom: 2px solid var(--border-color); 
-        }
-
-        /* Informations (Nom & Rareté) */
-        .card-info {
-            padding: 12px;
-            text-align: center;
+            border-radius: 5px;
+            margin-bottom: 10px;
         }
 
         .card-info h3 {
-            margin: 0 0 5px 0;
-            font-size: 1.2em;
-            font-weight: 700;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            color: #333; 
+            margin: 5px 0 2px 0;
+            font-size: 1.1em;
+            color: var(--header-color);
         }
 
         .card-info p {
             margin: 0;
-            font-size: 0.95em;
+            font-size: 0.9em;
+            color: #aaa;
+        }
+
+        .card-count {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: var(--accent-color);
+            color: var(--main-bg-color);
+            padding: 5px 10px;
+            border-radius: 50%;
             font-weight: 700;
-            padding-top: 5px;
-            border-top: 1px dashed #cccccc; 
-            color: var(--rarity-color, #777); 
+            font-size: 0.8em;
+            z-index: 10;
+            border: 2px solid white;
         }
         
-        /* Application des couleurs de rareté */
-        .Common p { color: var(--color-Common); }
-        .Uncommon p { color: var(--color-Uncommon); }
-        .Rare p { color: var(--color-Rare); }
-        .RareHolo p { color: var(--color-RareHolo); }
-        .RareHoloEX p { color: var(--color-RareHoloEX); }
+        /* Styles de Rareté (utilisent la classe nettoyée, ex: RareHoloEX) */
+        .card-container.RareHoloEX {
+            border: 4px solid var(--color-RareHoloEX);
+            box-shadow: 0 0 15px var(--color-RareHoloEX);
+        }
+        .card-container.RareHolo {
+            border: 4px solid var(--color-RareHolo);
+            box-shadow: 0 0 10px var(--color-RareHolo);
+        }
+        .card-container.Rare {
+            border: 4px solid var(--color-Rare);
+        }
+        .card-container.Uncommon {
+            border: 4px solid var(--color-Uncommon);
+        }
+        .card-container.Common {
+            border: 4px solid var(--color-Common);
+        }
 
     </style>
 </head>
 <body>
-
     <header class="header">
-        <a href="index.html" class="logo">TCG Bot</a>
+        <div class="logo"><a href="index.html">TCG Bot</a></div>
         <div class="burger-icon" id="burger">
             <div class="bar"></div>
             <div class="bar"></div>
@@ -245,176 +259,169 @@
             <li><a href="mycollection.html">Mes Cartes (Collection Personnelle)</a></li>
         </ul>
     </header>
-
     <div class="content">
         <h1>Ma Collection Personnelle</h1>
 
-        <div class="search-container">
-            <input type="text" id="username-input" placeholder="Entrez votre nom Twitch" value="">
-            <button id="load-collection-btn">Charger Collection</button>
+        <div class="search-form">
+            <input type="text" id="username-input" placeholder="Entrez votre nom Twitch..." />
+            <button id="load-collection-btn">Charger ma collection</button>
         </div>
 
-        <p id="status-message">Veuillez entrer votre nom Twitch pour charger votre collection.</p>
+        <p id="status-message">Entrez votre nom Twitch pour voir les cartes que vous avez tirées.</p>
 
         <div id="card-collection">
-            </div>
+        </div>
     </div>
 
-
-    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
-
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <script>
-        // Votre configuration Firebase ici
-        const firebaseConfig = {
-            apiKey: "VOTRE_API_KEY", // Remplacer par votre clé API
-            authDomain: "VOTRE_PROJECT_ID.firebaseapp.com", // Remplacer
-            projectId: "VOTRE_PROJECT_ID", // Remplacer
-            storageBucket: "VOTRE_PROJECT_ID.appspot.com", // Remplacer
-            messagingSenderId: "VOTRE_SENDER_ID", // Remplacer
-            appId: "VOTRE_APP_ID" // Remplacer
-        };
+        // Votre objet de configuration copié depuis Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyAL5PZdkeN_Vo7PY2z3vT6VV79pkDuQLhE",
+  authDomain: "tcg-bot-24e10.firebaseapp.com",
+  projectId: "tcg-bot-24e10",
+  storageBucket: "tcg-bot-24e10.firebasestorage.app",
+  messagingSenderId: "825599190047",
+  appId: "1:825599190047:web:006b01f7068909a1d8a12a"
+};
 
         // Initialisation de Firebase
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
-        } else {
-            firebase.app(); // Si déjà initialisé
         }
         const db = firebase.firestore();
 
-        // Stocker la liste complète des cartes pour reconstruire les images et les informations
         let ALL_CARDS_DATA = [];
-        let cardCatalogMap = {}; // Map pour la recherche rapide par ID
+        let cardCatalogMap = {};
+        let TOTAL_UNIQUE_CARDS = 0; // 👈 NOUVEAU : Variable pour stocker le total unique
 
         document.addEventListener('DOMContentLoaded', () => {
             const usernameInput = document.getElementById('username-input');
             const loadCollectionBtn = document.getElementById('load-collection-btn');
             const statusMessage = document.getElementById('status-message');
-            const cardCollection = document.getElementById('card-collection');
-            
-            // Tenter de récupérer le nom d'utilisateur depuis l'URL (si existant)
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has('user')) {
-                const urlUsername = urlParams.get('user').toLowerCase();
-                usernameInput.value = urlUsername;
-                // Démarre le chargement de la collection si un nom est dans l'URL
-                loadCardCatalog().then(() => loadCollection(urlUsername));
-            } else {
-                 loadCardCatalog(); // Charge le catalogue même si pas de nom d'utilisateur
-            }
+            const cardCollectionDiv = document.getElementById('card-collection');
 
-            /**
-             * Charge le catalogue complet des cartes (cards.json).
-             */
+            // --- 1. CHARGEMENT DU CATALOGUE COMPLET (POKÉMON) ---
             async function loadCardCatalog() {
                 try {
-                    // 🚨 CORRECTION GITHUB PAGES 🚨
-                    // Utilisation du chemin absolu /test-collect-cards/cards.json
-                    const response = await fetch('/test-collect-cards/cards.json'); 
-                    if (!response.ok) {
-                        throw new Error(`Erreur HTTP: ${response.status}`);
-                    }
+                    // Cherche cards.json, le fichier Pokémon
+                    const response = await fetch('cards.json'); 
+                    if (!response.ok) throw new Error('Fichier de catalogue cards.json non trouvé.');
+                    
                     ALL_CARDS_DATA = await response.json();
                     
-                    // Création de la map pour la recherche rapide
-                    cardCatalogMap = ALL_CARDS_DATA.reduce((map, card) => {
-                        map[card.id] = card;
-                        return map;
-                    }, {});
-                    console.log('Catalogue de cartes chargé avec succès.');
+                    // 🚨 DÉFINITION DU TOTAL UNIQUE DE CARTES 🚨
+                    TOTAL_UNIQUE_CARDS = ALL_CARDS_DATA.length;
 
+                    // Indexer pour la recherche par ID
+                    ALL_CARDS_DATA.forEach((card, index) => {
+                        // Assure que l'ID est défini, comme le bot le fait
+                        const cardId = card.id || String(index + 1); 
+                        cardCatalogMap[cardId] = { ...card, id: cardId };
+                    });
+                    console.log(`Catalogue complet chargé : ${Object.keys(cardCatalogMap).length} cartes.`);
+                    return true;
                 } catch (error) {
-                    console.error('Erreur de chargement du catalogue de cartes:', error);
-                    statusMessage.textContent = 'Erreur: Impossible de charger le catalogue de cartes. Vérifiez cards.json.';
-                    throw error; // Propager l'erreur pour ne pas tenter de charger la collection
+                    console.error("Erreur lors du chargement du catalogue:", error);
+                    statusMessage.textContent = `Erreur: Impossible de charger le fichier de cartes (cards.json).`;
+                    return false;
                 }
             }
+            
+            loadCardCatalog();
 
 
-            /**
-             * Charge et affiche la collection de l'utilisateur.
-             */
-            async function loadCollection(forcedUsername = null) {
-                const username = forcedUsername ? forcedUsername : usernameInput.value.trim();
-                
-                if (username === '') {
-                    statusMessage.textContent = 'Veuillez entrer un nom Twitch.';
+            // --- 2. FONCTION DE CHARGEMENT DE LA COLLECTION UTILISATEUR ---
+            loadCollectionBtn.addEventListener('click', () => {
+                const username = usernameInput.value.trim().toLowerCase();
+                if (!username) {
+                    statusMessage.textContent = "Veuillez entrer votre nom Twitch.";
                     return;
                 }
-                
+
+                if (TOTAL_UNIQUE_CARDS === 0) { // Vérifie la variable chargée
+                    statusMessage.textContent = "Catalogue de cartes en cours de chargement ou introuvable. Veuillez réessayer.";
+                    return;
+                }
+
                 statusMessage.textContent = `Chargement de la collection de ${username}...`;
-                cardCollection.innerHTML = ''; // Nettoyer l'affichage précédent
+                cardCollectionDiv.innerHTML = ''; // Nettoyer l'affichage précédent
 
-                if (ALL_CARDS_DATA.length === 0) {
-                    try {
-                        await loadCardCatalog();
-                    } catch (e) {
-                        return; // Arrêter si le catalogue n'est pas chargé
-                    }
-                }
-                
-                try {
-                    // 1. Récupérer les cartes de la sous-collection 'cards'
-                    const cardsRef = db.collection('collections').doc(username.toLowerCase()).collection('cards');
-                    const snapshot = await cardsRef.get();
-                    
-                    if (snapshot.empty) {
-                        statusMessage.textContent = `Aucune collection trouvée pour ${username}. Ouvrez votre premier pack sur le stream !`;
-                        return;
-                    }
-
-                    let userCards = [];
-                    snapshot.forEach(doc => {
-                        // On prend les données de la collection de l'utilisateur (id, count)
-                        const collectedCard = doc.data(); 
-                        
-                        // On complète avec les données du catalogue (name, rarity, imageUrl)
-                        const fullCard = cardCatalogMap[collectedCard.id];
-                        
-                        if (fullCard) {
-                            userCards.push({
-                                ...fullCard, // Copie id, name, rarity, imageUrl
-                                count: collectedCard.count // Ajoute le nombre d'exemplaires
-                            });
+                db.collection('collections').doc(username).get()
+                    .then(doc => {
+                        if (!doc.exists) {
+                            statusMessage.textContent = `Aucune collection trouvée pour ${username}. Ouvrez votre premier pack sur le stream !`;
+                            return;
                         }
+
+                        const collectionData = doc.data().cards || [];
+                        const groupedCollection = groupCards(collectionData);
+                        
+                        // Nombre de cartes uniques dans la collection de l'utilisateur
+                        const uniqueCardsCollected = Object.keys(groupedCollection).length;
+
+
+                        if (uniqueCardsCollected === 0) {
+                            statusMessage.textContent = `La collection de ${doc.data().username || username} est vide.`;
+                            return;
+                        }
+
+                        displayCollection(groupedCollection);
+                        
+                        // 🚨 MODIFICATION DU MESSAGE DE STATUT (Total Unique / Total Catalogue) 🚨
+                        statusMessage.innerHTML = `
+                            Collection de <strong>${doc.data().username || username}</strong> 
+                            | Cartes uniques : <strong>${uniqueCardsCollected}</strong> / <strong>${TOTAL_UNIQUE_CARDS}</strong>
+                            | Total de cartes tirées : ${collectionData.length} 
+                            (ouvert en ${doc.data().totalPacks || 0} packs)
+                        `;
+                    })
+                    .catch(error => {
+                        console.error("Erreur de récupération Firestore:", error);
+                        statusMessage.textContent = `Erreur de connexion à la base de données: ${error.message}`;
                     });
-
-                    // 2. Afficher les cartes
-                    userCards.sort((a, b) => a.id - b.id); // Optionnel: Trier par ID
-                    userCards.forEach(card => {
-                        const cardElement = createCardElement(card);
-                        cardCollection.appendChild(cardElement);
-                    });
-
-                    statusMessage.textContent = `Collection de ${username} chargée. ${userCards.length} cartes uniques.`;
-
-                } catch(error) {
-                    console.error('Erreur de récupération de la collection:', error);
-                    statusMessage.textContent = 'Une erreur est survenue lors de la connexion à la base de données.';
-                }
-            }
-            
-            // Attacher les événements
-            loadCollectionBtn.addEventListener('click', () => loadCollection());
-            
-            // Permet d'appuyer sur Entrée pour charger
-            usernameInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    loadCollection();
-                }
             });
 
+            // --- 3. FONCTIONS UTILITAIRES ---
+            function groupCards(cards) {
+                const grouped = {};
+                cards.forEach(card => {
+                    if (!grouped[card.id]) {
+                        // Cherche les informations complètes (dont imageUrl) dans le catalogue
+                        const fullCard = cardCatalogMap[card.id]; 
+                        grouped[card.id] = fullCard ? { ...fullCard, count: 0 } : { ...card, count: 0 }; 
+                    }
+                    grouped[card.id].count++;
+                });
+                return grouped;
+            }
+
+            function displayCollection(groupedCollection) {
+                cardCollectionDiv.innerHTML = ''; 
+
+                // Trier par ordre de rareté Pokémon
+                const sortedCards = Object.values(groupedCollection).sort((a, b) => {
+                    const order = ['Rare Holo EX', 'Rare Holo', 'Rare', 'Uncommon', 'Common'];
+                    return order.indexOf(a.rarity) - order.indexOf(b.rarity);
+                });
+
+                sortedCards.forEach(card => {
+                    const cardElement = createCardElement(card);
+                    cardCollectionDiv.appendChild(cardElement);
+                });
+            }
 
             function createCardElement(card) {
                 const container = document.createElement('div');
+                // Nettoyage de la rareté pour les classes CSS: "Rare Holo EX" -> "RareHoloEX"
+                const rarityClass = card.rarity ? card.rarity.replace(/ /g, '') : 'Common'; // Fallback
                 
-                const rarityClass = card.rarity.replace(/ /g, ''); 
                 container.className = `card-container ${rarityClass}`; 
 
                 const imageDiv = document.createElement('div');
                 imageDiv.className = 'card-image';
-                imageDiv.style.backgroundImage = `url('${card.imageUrl}')`;
+                imageDiv.style.backgroundImage = `url('${card.imageUrl || 'default_pokemon.png'}')`;
                 
                 const infoDiv = document.createElement('div');
                 infoDiv.className = 'card-info';
