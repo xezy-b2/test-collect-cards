@@ -1,5 +1,5 @@
 [
-  { "id": "1", "name": "Bellatrique", "rarity": "Common", "imageUrl": "https://raw.githubusercontent.com/xezy-b2/test-collect-cards/main/image/Bellatrique_1.png" },
+  { "id": "1", "name": "Bellatrique", "rarity": "Common", "imageUrl": "https://raw.githubusercontent.com/xezy-b2/test-collect-cards/refs/heads/main/image/Bellatrique_1.png" },
   { "id": "2", "name": "Bellatrique", "rarity": "Uncommon", "imageUrl": "https://raw.githubusercontent.com/xezy-b2/test-collect-cards/main/image/Bellatrique_2.png" },
   { "id": "3", "name": "Bellatrique", "rarity": "Rare Holo EX", "imageUrl": "https://raw.githubusercontent.com/xezy-b2/test-collect-cards/main/image/Bellatrique_3.png" },
   { "id": "4", "name": "Bellatrique", "rarity": "Common", "imageUrl": "https://raw.githubusercontent.com/xezy-b2/test-collect-cards/main/image/Bellatrique_4.png" },
@@ -55,3 +55,4 @@
   { "id": "54", "name": "Xezy", "rarity": "Common", "imageUrl": "images/Xezy_4.png" },
   { "id": "55", "name": "Xezy", "rarity": "Rare", "imageUrl": "images/Xezy_5.png" }
 ]
+
