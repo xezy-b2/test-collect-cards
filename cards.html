@@ -198,7 +198,7 @@
     <div class="content">
         <h1>Liste Complète des Cartes Tirables</h1>
         <div id="card-list">
-            <p id="loading-message">Chargement des 151 cartes...</p>
+            <p id="loading-message">Chargement des cartes...</p>
         </div>
     </div>
 
@@ -225,8 +225,8 @@
             const cardListContainer = document.getElementById('card-list');
             const loadingMessage = document.getElementById('loading-message');
 
-            // 🚨 CORRECTION POUR GITHUB PAGES 🚨
-            // Utiliser le chemin absolu /NOM_DU_REPERTOIRE/cards.json pour éviter les problèmes de base path.
+            // 🚨 CORRECTION GITHUB PAGES 🚨
+            // Utilisation du chemin absolu /NOM_DU_REPERTOIRE/cards.json
             fetch('/test-collect-cards/cards.json') 
                 .then(response => {
                     if (!response.ok) {
@@ -280,5 +280,4 @@
     </script>
 
 </body>
-
 </html>
